@@ -15,6 +15,7 @@ logic   signed     [SIZE-1:0]    X_reg;
 logic   signed     [SIZE-1:0]    Y_reg;
 logic   signed     [SIZE-1:0]    theta;
 logic   signed     [SIZE-1:0]  X_shift;
+//logic   signed     [SIZE-1:0]  factor;
 logic   signed     [SIZE-1:0]  Y_shift;
 logic                       theta_sign;
 logic              [3:0]     itr_count;
@@ -39,8 +40,9 @@ always @(posedge clk , negedge rst_n) begin
     X_reg     <=0;
     Y_reg     <=0;
     theta     <=0;
-    itr_count <=0;
     done      <=0;
+    itr_count <= STG;
+    //factor<=16'h09b8;
    end 
    else if(start) begin
     X_reg       <=  Xin;
@@ -71,9 +73,9 @@ always_comb begin
   X_shift    = X_reg>>>itr_count;                 //signed shift right
   Y_shift    = Y_reg>>>itr_count;
   theta_sign =theta[SIZE-1];                     //theta_sign=1 if z[i]<0
-  X_mul =    X_reg * 16'h09b8;
-  Y_mul =    Y_reg * 16'h09b8;
-  Xout       = (X_reg[SIZE-1])? 16'b0 : X_mul>>>12;
-  Yout       = (Y_reg[SIZE-1])? 16'b0 : Y_mul>>>12;
+  X_mul =    ($signed(X_reg) * $signed(16'h09b8))>>>12;
+  Y_mul =    ($signed(Y_reg) * $signed(16'h09b8))>>>12;
+  Xout       =  X_mul;
+  Yout       =  Y_mul;
 end
 endmodule
